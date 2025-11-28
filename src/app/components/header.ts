@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 
 @Component({
-  selector: 'app-header',
+  selector: "app-header",
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   template: `
-    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+    <header
+      class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50"
+    >
       <nav class="container-max flex items-center justify-between h-16">
         <!-- Logo -->
         <div class="flex items-center gap-2 flex-shrink-0">
-          <div class="w-8 h-8 bg-gradient-to-br from-primary-600 to-accent-600 rounded-lg flex items-center justify-center">
+          <div
+            class="w-8 h-8 bg-gradient-to-br from-primary-600 to-accent-600 rounded-lg flex items-center justify-center"
+          >
             <span class="text-white font-bold text-lg">&lt;/&gt;</span>
           </div>
           <span class="text-xl font-bold text-slate-900">CodeJudge</span>

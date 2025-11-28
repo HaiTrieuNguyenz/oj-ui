@@ -1,28 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink, ActivatedRoute } from "@angular/router";
 
 @Component({
-  selector: 'app-placeholder',
+  selector: "app-placeholder",
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="bg-slate-50 min-h-screen flex items-center justify-center py-20">
+    <div
+      class="bg-slate-50 min-h-screen flex items-center justify-center py-20"
+    >
       <div class="max-w-md mx-auto text-center">
         <div class="mb-8">
-          <div class="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center mb-6">
+          <div
+            class="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center mb-6"
+          >
             <span class="text-4xl">📋</span>
           </div>
-          <h1 class="text-3xl font-bold text-slate-900 mb-3">{{ pageTitle }}</h1>
+          <h1 class="text-3xl font-bold text-slate-900 mb-3">
+            {{ pageTitle }}
+          </h1>
           <p class="text-lg text-slate-600 leading-relaxed">
-            This page is coming soon! Continue building your coding skills with our problems and challenges.
+            This page is coming soon! Continue building your coding skills with
+            our problems and challenges.
           </p>
         </div>
 
         <div class="flex flex-col gap-3">
-          <a routerLink="/" class="btn-primary px-6 py-3">
-            Back to Home
-          </a>
+          <a routerLink="/" class="btn-primary px-6 py-3"> Back to Home </a>
           <a routerLink="/problems" class="btn-secondary px-6 py-3">
             Browse Problems
           </a>
@@ -32,14 +37,14 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
   `,
 })
 export class PlaceholderComponent implements OnInit {
-  pageTitle = 'Page Coming Soon';
+  pageTitle = "Page Coming Soon";
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
-      if (data['title']) {
-        this.pageTitle = data['title'];
+      if (data["title"]) {
+        this.pageTitle = data["title"];
       }
     });
   }
