@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SubmissionService } from '../services/submission.service';
+import { Submission } from '../models/submission.model';
 
 @Component({
   selector: 'app-problem-detail',
@@ -77,18 +79,36 @@ import { FormsModule } from '@angular/forms';
           </div>
         </div>
 
-        <!-- Code Editor -->
+        <!-- Code Editor & Submissions -->
         <div class="flex-1 flex flex-col bg-white">
           <!-- Tabs -->
           <div class="border-b border-slate-200">
             <div class="flex items-center">
-              <button class="px-6 py-4 border-b-2 border-primary-600 text-primary-600 font-semibold">Code</button>
-              <button class="px-6 py-4 text-slate-600 hover:text-slate-900 font-semibold">Submissions</button>
+              <button
+                (click)="activeTab = 'code'"
+                [class.border-b-2]="activeTab === 'code'"
+                [class.border-primary-600]="activeTab === 'code'"
+                [class.text-primary-600]="activeTab === 'code'"
+                [class.text-slate-600]="activeTab !== 'code'"
+                class="px-6 py-4 font-semibold hover:text-slate-900 transition-colors"
+              >
+                Code
+              </button>
+              <button
+                (click)="activeTab = 'submissions'"
+                [class.border-b-2]="activeTab === 'submissions'"
+                [class.border-primary-600]="activeTab === 'submissions'"
+                [class.text-primary-600]="activeTab === 'submissions'"
+                [class.text-slate-600]="activeTab !== 'submissions'"
+                class="px-6 py-4 font-semibold hover:text-slate-900 transition-colors"
+              >
+                Submissions ({{ submissions.length }})
+              </button>
             </div>
           </div>
 
-          <!-- Editor -->
-          <div class="flex-1 flex flex-col overflow-hidden p-6">
+          <!-- Code Tab -->
+          <div *ngIf="activeTab === 'code'" class="flex-1 flex flex-col overflow-hidden p-6">
             <div class="mb-4">
               <label class="block text-sm font-medium text-slate-700 mb-2">Language</label>
               <select [(ngModel)]="selectedLanguage" class="input-field max-w-xs">
@@ -101,7 +121,7 @@ import { FormsModule } from '@angular/forms';
               </select>
             </div>
 
-            <!-- Code Editor Placeholder -->
+            <!-- Code Editor -->
             <div class="flex-1 bg-slate-900 rounded-lg overflow-hidden flex flex-col">
               <textarea
                 [(ngModel)]="code"
@@ -121,6 +141,51 @@ import { FormsModule } from '@angular/forms';
               <button class="btn-ghost">
                 Reset
               </button>
+            </div>
+          </div>
+
+          <!-- Submissions Tab -->
+          <div *ngIf="activeTab === 'submissions'" class="flex-1 overflow-y-auto p-6">
+            <div class="space-y-4">
+              <div *ngIf="submissions.length === 0" class="text-center py-12">
+                <p class="text-slate-600 text-lg">No submissions yet for this problem.</p>
+                <p class="text-slate-500 mt-2">Submit your solution to see it appear here.</p>
+              </div>
+
+              <div *ngFor="let submission of submissions" class="card p-4 hover:shadow-lg transition-all cursor-pointer">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span [ngClass]="getStatusBadgeClass(submission.status)" class="badge text-xs font-bold px-2.5 py-1">
+                        {{ submission.status }}
+                      </span>
+                      <span class="text-xs font-mono text-slate-500">{{ submission.language }}</span>
+                      <span class="text-xs text-slate-500">{{ formatDate(submission.timestamp) }}</span>
+                    </div>
+                    <p class="text-xs text-slate-600">{{ submission.userName }}</p>
+                  </div>
+                  <div class="text-right">
+                    <div *ngIf="submission.status === 'Accepted'" class="text-xs font-semibold text-success-700">
+                      {{ submission.runtime }}ms / {{ submission.memory }}MB
+                    </div>
+                    <div *ngIf="submission.status !== 'Accepted'" class="text-xs text-slate-600">
+                      {{ submission.testsPassed }}/{{ submission.totalTests }} passed
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Code Preview -->
+                <div class="bg-slate-900 rounded text-slate-100 font-mono text-xs p-3 mb-3 max-h-32 overflow-hidden">
+                  <pre class="text-slate-300" [textContent]="submission.codeSnippet.substring(0, 150) + (submission.codeSnippet.length > 150 ? '...' : '')"></pre>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex gap-4 text-xs text-slate-600">
+                  <div>✓ Tests: {{ submission.testsPassed }}/{{ submission.totalTests }}</div>
+                  <div *ngIf="submission.runtime > 0">⚡ Runtime: {{ submission.runtime }}ms</div>
+                  <div *ngIf="submission.memory > 0">💾 Memory: {{ submission.memory }}MB</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -152,12 +217,26 @@ export class ProblemDetailComponent implements OnInit {
   // Your code here
   return [];
 }`;
+  activeTab: 'code' | 'submissions' = 'code';
+  submissions: Submission[] = [];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private submissionService: SubmissionService
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.problemId = params['id'];
+      if (this.problemId) {
+        this.loadSubmissions(this.problemId);
+      }
+    });
+  }
+
+  loadSubmissions(problemId: number): void {
+    this.submissionService.getSubmissionsByProblemId(problemId).subscribe((submissions) => {
+      this.submissions = submissions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     });
   }
 
@@ -168,5 +247,32 @@ export class ProblemDetailComponent implements OnInit {
       Hard: 'badge-danger',
     };
     return classes[difficulty] || 'badge-primary';
+  }
+
+  getStatusBadgeClass(status: string): string {
+    const classes: Record<string, string> = {
+      Accepted: 'badge-success',
+      'Wrong Answer': 'badge-danger',
+      'Time Limit Exceeded': 'badge-warning',
+      'Runtime Error': 'badge-danger',
+      'Compilation Error': 'badge-danger',
+      'Memory Limit Exceeded': 'badge-warning',
+    };
+    return classes[status] || 'badge-primary';
+  }
+
+  formatDate(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+
+    return date.toLocaleDateString();
   }
 }
