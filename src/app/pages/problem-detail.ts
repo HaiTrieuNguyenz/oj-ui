@@ -219,6 +219,7 @@ export class ProblemDetailComponent implements OnInit {
 }`;
   activeTab: 'code' | 'submissions' = 'code';
   submissions: Submission[] = [];
+  expandedSubmissionId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
