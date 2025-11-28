@@ -227,7 +227,7 @@ export class ProblemDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.problemId = params['id'];
+      this.problemId = +params['id'];
       if (this.problemId) {
         this.loadSubmissions(this.problemId);
       }
