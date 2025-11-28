@@ -192,6 +192,8 @@ export class SubmissionsComponent implements OnInit {
   wrongAnswerCount = 0;
   tleCoutt = 0;
 
+  expandedSubmissionId: number | null = null;
+
   constructor(private submissionService: SubmissionService) {}
 
   ngOnInit(): void {
