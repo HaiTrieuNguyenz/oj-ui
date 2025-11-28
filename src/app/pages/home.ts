@@ -49,11 +49,11 @@ interface Problem {
                   <div class="text-accent-400">function solve(nums: number[]): number {</div>
                   <div class="text-slate-400 ml-4">// Your solution here</div>
                   <div class="text-slate-400 ml-4">let result = 0;</div>
-                  <div class="text-slate-400 ml-4">for (let i = 0; i &lt; nums.length; i++) {</div>
+                  <div class="text-slate-400 ml-4">for (let i = 0; i {{ '&lt;' }} nums.length; i++) {</div>
                   <div class="text-accent-400 ml-8">result += nums[i];</div>
-                  <div class="text-slate-400 ml-4">}</div>
+                  <div class="text-slate-400 ml-4">{{ '}' }}</div>
                   <div class="text-accent-400 ml-4">return result;</div>
-                  <div class="text-accent-400">}</div>
+                  <div class="text-accent-400">{{ '}' }}</div>
                 </div>
               </div>
             </div>
