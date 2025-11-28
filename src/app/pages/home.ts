@@ -44,15 +44,17 @@ interface Problem {
           <div class="hidden md:block animate-slide-up">
             <div class="relative">
               <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl opacity-10 blur-3xl"></div>
-              <div class="relative bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8">
-                <pre class="font-mono text-sm text-accent-400 whitespace-pre-wrap break-words">function solve(nums: number[]): number {
-  // Your solution here
-  let result = 0;
-  for (let i = 0; i &lt; nums.length; i++) {
-    result += nums[i];
-  }
-  return result;
-}</pre>
+              <div class="relative bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 space-y-6">
+                <div class="flex items-center justify-center gap-4">
+                  <div class="text-4xl">💻</div>
+                  <div class="text-4xl">⚡</div>
+                  <div class="text-4xl">🏆</div>
+                </div>
+                <div class="text-center space-y-3">
+                  <p class="text-slate-300 font-mono text-sm">Solve • Learn • Compete</p>
+                  <p class="text-accent-400 font-semibold">2500+ Coding Problems</p>
+                  <p class="text-slate-400 text-sm">Master DSA & Prepare for Tech Interviews</p>
+                </div>
               </div>
             </div>
           </div>
