@@ -45,16 +45,14 @@ interface Problem {
             <div class="relative">
               <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl opacity-10 blur-3xl"></div>
               <div class="relative bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8">
-                <div class="font-mono text-sm space-y-2">
-                  <div class="text-accent-400">function solve(nums: number[]): number {</div>
-                  <div class="text-slate-400 ml-4">// Your solution here</div>
-                  <div class="text-slate-400 ml-4">let result = 0;</div>
-                  <div class="text-slate-400 ml-4">for (let i = 0; i {{ '&lt;' }} nums.length; i++) {</div>
-                  <div class="text-accent-400 ml-8">result += nums[i];</div>
-                  <div class="text-slate-400 ml-4">{{ '}' }}</div>
-                  <div class="text-accent-400 ml-4">return result;</div>
-                  <div class="text-accent-400">{{ '}' }}</div>
-                </div>
+                <pre class="font-mono text-sm text-accent-400 whitespace-pre-wrap break-words">function solve(nums: number[]): number {
+  // Your solution here
+  let result = 0;
+  for (let i = 0; i &lt; nums.length; i++) {
+    result += nums[i];
+  }
+  return result;
+}</pre>
               </div>
             </div>
           </div>
