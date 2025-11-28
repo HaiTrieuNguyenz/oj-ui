@@ -161,13 +161,6 @@ import { Submission } from "../models/submission.model";
 
               <!-- Middle: Code & Stats -->
               <div class="lg:col-span-4">
-                <div class="bg-slate-900 rounded p-4 mb-3">
-                  <p
-                    class="text-slate-300 font-mono text-xs max-h-12 overflow-hidden"
-                  >
-                    {{ submission.codeSnippet.substring(0, 100) }}...
-                  </p>
-                </div>
                 <div class="flex items-center gap-4 text-sm">
                   <div class="flex items-center gap-1">
                     <span class="text-slate-500">Language:</span>
@@ -226,8 +219,17 @@ import { Submission } from "../models/submission.model";
             </div>
 
             <!-- Code Preview (Expanded) -->
+            <div class="mt-4 text-right">
+              <button
+                (click)="toggleCodeVisibility(submission.id)"
+                class="btn-secondary"
+              >
+                {{ codeVisible[submission.id] ? "Hide Code" : "View Code" }}
+              </button>
+            </div>
             <div
-              class="mt-4 bg-slate-900 rounded-lg p-4 max-h-40 overflow-y-auto"
+              *ngIf="codeVisible[submission.id]"
+              class="mt-4 bg-slate-900 rounded-lg p-4 max-h-60 overflow-y-auto"
             >
               <pre
                 class="text-slate-300 font-mono text-xs"
@@ -266,6 +268,7 @@ export class SubmissionsComponent implements OnInit {
   tleCoutt = 0;
 
   expandedSubmissionId: number | null = null;
+  codeVisible: { [key: number]: boolean } = {};
 
   constructor(private submissionService: SubmissionService) {}
 
@@ -275,6 +278,10 @@ export class SubmissionsComponent implements OnInit {
       this.updateStats();
       this.applyFilters();
     });
+  }
+
+  toggleCodeVisibility(submissionId: number): void {
+    this.codeVisible[submissionId] = !this.codeVisible[submissionId];
   }
 
   applyFilters(): void {
