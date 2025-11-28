@@ -134,6 +134,26 @@ import { Submission } from "../models/submission.model";
               >
                 Submissions ({{ submissions.length }})
               </button>
+              <button
+                (click)="activeTab = 'solution'"
+                [class.border-b-2]="activeTab === 'solution'"
+                [class.border-primary-600]="activeTab === 'solution'"
+                [class.text-primary-600]="activeTab === 'solution'"
+                [class.text-slate-600]="activeTab !== 'solution'"
+                class="px-6 py-4 font-semibold hover:text-slate-900 transition-colors"
+              >
+                Solution
+              </button>
+              <button
+                (click)="activeTab = 'discussion'"
+                [class.border-b-2]="activeTab === 'discussion'"
+                [class.border-primary-600]="activeTab === 'discussion'"
+                [class.text-primary-600]="activeTab === 'discussion'"
+                [class.text-slate-600]="activeTab !== 'discussion'"
+                class="px-6 py-4 font-semibold hover:text-slate-900 transition-colors"
+              >
+                Discussion
+              </button>
             </div>
           </div>
 
@@ -285,6 +305,179 @@ import { Submission } from "../models/submission.model";
               </div>
             </div>
           </div>
+
+          <!-- Solution Tab -->
+          <div
+            *ngIf="activeTab === 'solution'"
+            class="flex-1 overflow-y-auto p-6"
+          >
+            <div class="space-y-8">
+              <div *ngFor="let solution of solutions" class="card p-6">
+                <h3 class="text-xl font-bold text-slate-900 mb-3">
+                  {{ solution.title }}
+                </h3>
+                <div class="flex items-center gap-4 mb-4">
+                  <span class="badge" [ngClass]="solution.complexity.timeClass"
+                    >Time: {{ solution.complexity.time }}</span
+                  >
+                  <span
+                    class="badge"
+                    [ngClass]="solution.complexity.spaceClass"
+                    >Space: {{ solution.complexity.space }}</span
+                  >
+                </div>
+                <div
+                  class="prose prose-sm max-w-none"
+                  [innerHTML]="solution.explanation"
+                ></div>
+                <div class="mt-4 bg-slate-900 rounded-lg">
+                  <pre
+                    class="text-slate-300 font-mono text-xs p-4"
+                  ><code [innerHTML]="solution.code"></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Discussion Tab -->
+          <div
+            *ngIf="activeTab === 'discussion'"
+            class="flex-1 overflow-y-auto p-6"
+          >
+            <!-- Discussion Rules -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+              <h3 class="text-lg font-bold text-blue-900 mb-2">
+                Discussion Rules
+              </h3>
+              <ul class="list-disc list-inside text-blue-800 text-sm space-y-2">
+                <li>
+                  Be respectful and constructive. No personal attacks or
+                  trolling.
+                </li>
+                <li>
+                  Do not post solutions in the discussion. Use the "Solution"
+                  tab instead.
+                </li>
+                <li>
+                  Keep discussions focused on the problem. Ask clarifying
+                  questions, discuss edge cases, or share alternative
+                  approaches.
+                </li>
+                <li>
+                  Use code formatting for any small snippets of code you share.
+                </li>
+              </ul>
+            </div>
+
+            <!-- Post a Comment -->
+            <div class="mb-8">
+              <h3 class="text-xl font-bold text-slate-900 mb-4">
+                Post a Comment
+              </h3>
+              <textarea
+                [(ngModel)]="newCommentText"
+                class="input-field w-full"
+                rows="4"
+                placeholder="Share your thoughts on this problem..."
+              ></textarea>
+              <div class="text-right mt-4">
+                <button class="btn-primary">Post Comment</button>
+              </div>
+            </div>
+
+            <!-- Comments List -->
+            <div class="space-y-6">
+              <div
+                *ngFor="let comment of comments"
+                class="bg-white border border-slate-200 rounded-lg p-6"
+              >
+                <div class="flex items-start gap-4">
+                  <img
+                    [src]="comment.avatar"
+                    class="w-10 h-10 rounded-full"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <span class="font-bold text-slate-900">{{
+                          comment.username
+                        }}</span>
+                        <span class="text-sm text-slate-500 ml-2">{{
+                          formatDate(comment.timestamp)
+                        }}</span>
+                      </div>
+                      <button class="btn-ghost text-sm">Reply</button>
+                    </div>
+                    <p class="text-slate-700 mt-2">{{ comment.text }}</p>
+
+                    <!-- Replies -->
+                    <div class="mt-4">
+                      <button
+                        *ngIf="comment.replies.length > 0 && !comment.showReplies"
+                        (click)="comment.showReplies = true"
+                        class="btn-secondary text-sm"
+                      >
+                        Show {{ comment.replies.length }} replies
+                      </button>
+                      <button
+                        *ngIf="comment.showReplies"
+                        (click)="comment.showReplies = false"
+                        class="btn-secondary text-sm"
+                      >
+                        Hide replies
+                      </button>
+
+                      <div *ngIf="comment.showReplies" class="mt-4 space-y-4">
+                        <div
+                          *ngFor="let reply of comment.replies"
+                          class="flex items-start gap-4"
+                        >
+                          <img
+                            [src]="reply.avatar"
+                            class="w-8 h-8 rounded-full"
+                          />
+                          <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                              <div>
+                                <span class="font-bold text-slate-900">{{
+                                  reply.username
+                                }}</span>
+                                <span class="text-sm text-slate-500 ml-2">{{
+                                  formatDate(reply.timestamp)
+                                }}</span>
+                              </div>
+                            </div>
+                            <p class="text-slate-700 mt-1">
+                              {{ reply.text }}
+                            </p>
+                          </div>
+                        </div>
+                        <!-- Reply Form -->
+                        <div class="flex items-start gap-4">
+                          <img
+                            src="https://i.pravatar.cc/150?u=currentUser"
+                            class="w-8 h-8 rounded-full"
+                          />
+                          <div class="flex-1">
+                            <textarea
+                              class="input-field w-full"
+                              rows="2"
+                              placeholder="Write a reply..."
+                            ></textarea>
+                            <div class="text-right mt-2">
+                              <button class="btn-primary text-sm">
+                                Post Reply
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -314,9 +507,120 @@ export class ProblemDetailComponent implements OnInit {
   // Your code here
   return [];
 }`;
-  activeTab: "code" | "submissions" = "code";
+  activeTab: "code" | "submissions" | "solution" | "discussion" = "code";
   submissions: Submission[] = [];
   expandedSubmissionId: number | null = null;
+  newCommentText = "";
+
+  solutions = [
+    {
+      title: "Brute Force Approach",
+      complexity: {
+        time: "O(n^2)",
+        space: "O(1)",
+        timeClass: "badge-danger",
+        spaceClass: "badge-success",
+      },
+      explanation: `<p>The most straightforward solution is to iterate through each element <code>x</code> and then iterate through the rest of the array to find an element <code>y</code> such that <code>x + y = target</code>.</p><p>This involves a nested loop, where the outer loop runs from the first element to the second-to-last, and the inner loop runs from the next element to the last.</p>`,
+      code: `function twoSum(nums, target) {
+  for (let i = 0; i < nums.length; i++) {
+    for (let j = i + 1; j < nums.length; j++) {
+      if (nums[i] + nums[j] === target) {
+        return [i, j];
+      }
+    }
+  }
+  return [];
+}`,
+    },
+    {
+      title: "Two-Pass Hash Table",
+      complexity: {
+        time: "O(n)",
+        space: "O(n)",
+        timeClass: "badge-warning",
+        spaceClass: "badge-warning",
+      },
+      explanation: `<p>To improve the runtime, we can use a hash table (like a JavaScript <code>Map</code> or <code>Object</code>). We can trade space for speed.</p><p>The idea is to iterate through the array twice. In the first pass, we add each element's value and its index to the hash table. In the second pass, for each element, we check if its complement (<code>target - nums[i]</code>) exists in the hash table. If it does, and it's not the same element, we have our solution.</p>`,
+      code: `function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    map.set(nums[i], i);
+  }
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (map.has(complement) && map.get(complement) !== i) {
+      return [i, map.get(complement)];
+    }
+  }
+  return [];
+}`,
+    },
+    {
+      title: "One-Pass Hash Table (Optimal)",
+      complexity: {
+        time: "O(n)",
+        space: "O(n)",
+        timeClass: "badge-success",
+        spaceClass: "badge-warning",
+      },
+      explanation: `<p>We can optimize the hash table approach by doing it in a single pass. While we iterate and insert elements into the hash table, we also look back to check if the current element's complement already exists in the table.</p><p>If it exists, we have found a solution and can return immediately. This is the most optimal approach in terms of time complexity.</p>`,
+      code: `function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (map.has(complement)) {
+      return [map.get(complement), i];
+    }
+    map.set(nums[i], i);
+  }
+  return [];
+}`,
+    },
+  ];
+
+  comments = [
+    {
+      id: 1,
+      username: "CuriousCoder",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+      timestamp: new Date("2025-11-27T14:00:00Z"),
+      text: "I was wondering about the constraints. If the input array could contain duplicates, how would that change the problem?",
+      replies: [],
+      showReplies: false,
+    },
+    {
+      id: 2,
+      username: "DataWizard",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026705d",
+      timestamp: new Date("2025-11-26T18:30:00Z"),
+      text: "The one-pass hash table solution is brilliant! It's amazing how a simple data structure can improve the time complexity so dramatically.",
+      replies: [
+        {
+          id: 3,
+          username: "CodeNewbie",
+          avatar: "https://i.pravatar.cc/150?u=a042581f4e29026706d",
+          timestamp: new Date("2025-11-26T19:00:00Z"),
+          text: "I agree! I was stuck on the O(n^2) solution for a while. This is a great example of space-time tradeoff.",
+        },
+        {
+          id: 4,
+          username: "AlgoExpert",
+          avatar: "https://i.pravatar.cc/150?u=a042581f4e29026707d",
+          timestamp: new Date("2025-11-27T09:15:00Z"),
+          text: "Exactly. It's a classic pattern for 'find a pair' problems. Always think about hash maps when you see one!",
+        },
+        {
+          id: 5,
+          username: "DataWizard",
+          avatar: "https://i.pravatar.cc/150?u=a042581f4e29026705d",
+          timestamp: new Date("2025-11-27T09:30:00Z"),
+          text: "Good point. I'll remember that for future problems. Thanks!",
+        },
+      ],
+      showReplies: false,
+    },
+  ];
 
   constructor(
     private route: ActivatedRoute,
