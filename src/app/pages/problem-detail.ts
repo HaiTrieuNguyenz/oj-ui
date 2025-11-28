@@ -152,17 +152,18 @@ import { Submission } from '../models/submission.model';
                 <p class="text-slate-500 mt-2">Submit your solution to see it appear here.</p>
               </div>
 
-              <div *ngFor="let submission of submissions" class="card p-4 hover:shadow-lg transition-all cursor-pointer">
-                <div class="flex items-start justify-between mb-3">
+              <div *ngFor="let submission of submissions" class="card p-6 hover:shadow-lg transition-all border-2 border-slate-200 hover:border-primary-300">
+                <!-- Header Row -->
+                <div class="flex items-start justify-between mb-4">
                   <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
-                      <span [ngClass]="getStatusBadgeClass(submission.status)" class="badge text-xs font-bold px-2.5 py-1">
+                      <span [ngClass]="getStatusBadgeClass(submission.status)" class="badge text-xs font-bold px-3 py-1">
                         {{ submission.status }}
                       </span>
-                      <span class="text-xs font-mono text-slate-500">{{ submission.language }}</span>
+                      <span class="text-xs font-mono font-semibold text-slate-700">{{ submission.language }}</span>
                       <span class="text-xs text-slate-500">{{ formatDate(submission.timestamp) }}</span>
                     </div>
-                    <p class="text-xs text-slate-600">{{ submission.userName }}</p>
+                    <p class="text-xs font-medium text-slate-600">{{ submission.userName }}</p>
                   </div>
                   <div class="text-right">
                     <div *ngIf="submission.status === 'Accepted'" class="text-xs font-semibold text-success-700">
@@ -174,16 +175,24 @@ import { Submission } from '../models/submission.model';
                   </div>
                 </div>
 
-                <!-- Code Preview -->
-                <div class="bg-slate-900 rounded text-slate-100 font-mono text-xs p-3 mb-3 max-h-32 overflow-hidden">
-                  <pre class="text-slate-300" [textContent]="submission.codeSnippet.substring(0, 150) + (submission.codeSnippet.length > 150 ? '...' : '')"></pre>
-                </div>
-
-                <!-- Stats -->
-                <div class="flex gap-4 text-xs text-slate-600">
+                <!-- Stats Row -->
+                <div class="flex gap-4 text-xs text-slate-600 mb-4 pb-4 border-b border-slate-200">
                   <div>✓ Tests: {{ submission.testsPassed }}/{{ submission.totalTests }}</div>
                   <div *ngIf="submission.runtime > 0">⚡ Runtime: {{ submission.runtime }}ms</div>
                   <div *ngIf="submission.memory > 0">💾 Memory: {{ submission.memory }}MB</div>
+                </div>
+
+                <!-- View Code Button -->
+                <button
+                  (click)="expandedSubmissionId = expandedSubmissionId === submission.id ? null : submission.id"
+                  class="btn-secondary text-sm w-full mb-4"
+                >
+                  {{ expandedSubmissionId === submission.id ? 'Hide Code' : 'View Code' }}
+                </button>
+
+                <!-- Code Preview (Hidden by default) -->
+                <div *ngIf="expandedSubmissionId === submission.id" class="bg-slate-900 rounded-lg text-slate-100 font-mono text-xs p-4 max-h-64 overflow-y-auto">
+                  <pre class="text-slate-300" [textContent]="submission.codeSnippet"></pre>
                 </div>
               </div>
             </div>
